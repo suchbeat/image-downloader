@@ -8,6 +8,12 @@ import requests
 
 
 def download_image(url, dir_name):
+    """Function that makes image download
+
+    :Parameters:
+        dir_name: str,
+            path to the folder where images will be downloaded.
+    """
     try:
         response = requests.get(url, stream=True)
         if response.status_code == 200:
@@ -34,8 +40,10 @@ def main():
                         help='Download directory')
     args = parser.parse_args()
 
+    # Parse input file and form list with the URL paths
     urls = [url.rstrip('\n') for url in open(args.file) if url != '\n']
 
+    # Make pool with two greenlets
     pool = gevent.pool.Pool(2)
     [pool.spawn(download_image, url, args.dir) for url in urls]
     pool.join()
